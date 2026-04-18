@@ -12,23 +12,32 @@ const API_URL = 'https://script.google.com/macros/s/AKfycbxCDCw9_9LXQ0xwW0avo4bx
 // ============================================
 
 /**
-* استدعاء API
+* استدعاء API باستخدام FormData لتجاوز CORS
 */
 async function callAPI(action, payload = {}) {
     try {
+        // إنشاء FormData للإرسال
+        const formData = new FormData();
+        formData.append('action', action);
+        formData.append('payload', JSON.stringify(payload));
+       
         const response = await fetch(API_URL, {
             method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ action: action, payload: payload })
+            body: formData
         });
        
-        const data = await response.json();
-        return data;
+        const text = await response.text();
+       
+        // محاولة تحويل النص إلى JSON
+        try {
+            return JSON.parse(text);
+        } catch (e) {
+            console.error('Invalid JSON response:', text);
+            return { success: false, message: 'استجابة غير صالحة من الخادم' };
+        }
     } catch (error) {
         console.error('API Error:', error);
-        return { success: false, message: 'فشل الاتصال بالخادم' };
+        return { success: false, message: 'فشل الاتصال بالخادم: ' + error.message };
     }
 }
 
@@ -45,16 +54,6 @@ async function login(username, password) {
     if (result.success) {
         saveToStorage('user', result.user);
         saveToStorage('isLoggedIn', true);
-       
-        // تسجيل حركة في السجل
-        await callAPI('logAction', {
-            user_id: result.user.id,
-            username: result.user.username,
-            role: result.user.role,
-            action: 'تسجيل دخول',
-            action_type: 'login'
-        });
-       
         return { success: true, user: result.user };
     }
    
@@ -64,19 +63,7 @@ async function login(username, password) {
 /**
 * تسجيل الخروج
 */
-async function logout() {
-    const user = getCurrentUser();
-   
-    if (user) {
-        await callAPI('logAction', {
-            user_id: user.id,
-            username: user.username,
-            role: user.role,
-            action: 'تسجيل خروج',
-            action_type: 'logout'
-        });
-    }
-   
+function logout() {
     clearStorage();
     window.location.href = 'login.html';
 }
@@ -281,12 +268,6 @@ function redirectIfNotAuthorized(requiredRole) {
 
 document.addEventListener('DOMContentLoaded', async function() {
     console.log('🚀 نظام متابعة البريد - الإصدار 3.0.0');
-   
-    // التحقق من تفعيل التطبيق
-    const isActivated = await checkActivation();
-    if (!isActivated) {
-        console.warn('⚠️ التطبيق غير مفعل');
-    }
    
     // عرض اسم المستخدم في الصفحات الداخلية
     const user = getCurrentUser();
