@@ -1,5 +1,9 @@
 
 
+/* ============================================ */
+/* نظام متابعة البريد الوارد - الإصدار 3.0.0    */
+/* ============================================ */
+
 * {
     margin: 0;
     padding: 0;
@@ -7,18 +11,63 @@
 }
 
 :root {
+    /* الألوان الأساسية */
     --primary-dark: #002623;
     --primary-mid: #054239;
     --primary-light: #428177;
     --accent-gold: #988561;
     --accent-light: #b9a779;
     --bg-light: #edebe0;
+   
+    /* ألوان إضافية */
+    --bg-dark: #0f1117;
+    --surface: #181c27;
+    --surface2: #1e2333;
+    --border: #2a3050;
+    --border2: #3a4570;
+    --text: #e8eaf0;
+    --text-dark: #1a1a1a;
+    --muted: #7a85a0;
+   
+    /* ألوان الحالات */
+    --blue: #4a90d9;
+    --blue-light: #6aaff0;
+    --blue-dim: #1a3560;
+    --green: #3dba7e;
+    --green-dim: #0d3322;
+    --amber: #e8a020;
+    --amber-dim: #3a2800;
+    --red: #e05555;
+    --red-dim: #3a1010;
+    --purple: #8a7fdb;
+   
+    /* القياسات */
+    --radius: 10px;
+    --radius-lg: 14px;
+    --radius-sm: 8px;
+   
+    /* الظلال */
+    --shadow-sm: 0 2px 4px rgba(0,0,0,0.1);
+    --shadow-md: 0 4px 8px rgba(0,0,0,0.15);
+    --shadow-lg: 0 10px 25px rgba(0,0,0,0.2);
+    --shadow-xl: 0 20px 40px rgba(0,0,0,0.3);
 }
 
 body {
     font-family: 'Tajawal', sans-serif;
-    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-mid) 100%);
+    background: var(--bg-dark);
+    color: var(--text);
     min-height: 100vh;
+    font-size: 15px;
+    direction: rtl;
+    line-height: 1.6;
+}
+
+/* ============================================ */
+/* صفحة تسجيل الدخول                            */
+/* ============================================ */
+body.login-page {
+    background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary-mid) 100%);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -32,9 +81,21 @@ body {
 
 .login-card {
     background: white;
-    border-radius: 20px;
-    box-shadow: 0 20px 40px rgba(0, 0, 0, 0.3);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-xl);
     padding: 40px 30px;
+    animation: fadeInUp 0.5s ease;
+}
+
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translateY(20px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
 
 .logo {
@@ -46,13 +107,14 @@ body {
     width: 70px;
     height: 70px;
     background: var(--primary-mid);
-    border-radius: 20px;
+    border-radius: var(--radius-lg);
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0 auto 15px;
     color: var(--bg-light);
     font-size: 30px;
+    box-shadow: var(--shadow-md);
 }
 
 .logo h1 {
@@ -65,6 +127,7 @@ body {
 .logo p {
     color: var(--accent-gold);
     font-size: 14px;
+    font-weight: 500;
 }
 
 .form-group {
@@ -79,21 +142,31 @@ body {
     font-size: 14px;
 }
 
-.form-group input {
+.form-group input,
+.form-group select,
+.form-group textarea {
     width: 100%;
     padding: 14px 16px;
     border: 2px solid #e0e0e0;
-    border-radius: 12px;
+    border-radius: var(--radius);
     font-size: 15px;
     font-family: 'Tajawal', sans-serif;
     transition: all 0.3s;
     background: var(--bg-light);
 }
 
-.form-group input:focus {
+.form-group input:focus,
+.form-group select:focus,
+.form-group textarea:focus {
     outline: none;
     border-color: var(--primary-light);
     background: white;
+    box-shadow: 0 0 0 3px rgba(66, 129, 119, 0.1);
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 100px;
 }
 
 .btn-login {
@@ -102,34 +175,69 @@ body {
     background: var(--primary-mid);
     color: white;
     border: none;
-    border-radius: 12px;
+    border-radius: var(--radius);
     font-size: 16px;
     font-weight: 700;
     font-family: 'Tajawal', sans-serif;
     cursor: pointer;
     transition: all 0.3s;
     margin-top: 10px;
+    box-shadow: var(--shadow-sm);
 }
 
 .btn-login:hover {
     background: var(--primary-dark);
     transform: translateY(-2px);
-    box-shadow: 0 10px 20px rgba(0, 38, 35, 0.3);
+    box-shadow: var(--shadow-md);
+}
+
+.btn-login:active {
+    transform: translateY(0);
+}
+
+.btn-login:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+    transform: none;
 }
 
 .error-message {
     background: #ffe0e0;
-    color: #d32f2f;
+    color: var(--red);
     padding: 12px;
-    border-radius: 10px;
+    border-radius: var(--radius);
     font-size: 14px;
     margin-bottom: 20px;
     display: none;
-    border-right: 4px solid #d32f2f;
+    border-right: 4px solid var(--red);
 }
 
 .error-message.show {
     display: block;
+    animation: shake 0.3s ease;
+}
+
+@keyframes shake {
+    0%, 100% { transform: translateX(0); }
+    25% { transform: translateX(-5px); }
+    75% { transform: translateX(5px); }
+}
+
+.loading-message {
+    background: var(--primary-light);
+    color: white;
+    padding: 12px;
+    border-radius: var(--radius);
+    font-size: 14px;
+    margin-bottom: 20px;
+    text-align: center;
+    animation: pulse 1.5s infinite;
+}
+
+@keyframes pulse {
+    0% { opacity: 0.7; }
+    50% { opacity: 1; }
+    100% { opacity: 0.7; }
 }
 
 .footer {
@@ -139,8 +247,668 @@ body {
     font-size: 13px;
 }
 
+/* ============================================ */
+/* الشريط الجانبي                              */
+/* ============================================ */
+.sidebar {
+    position: fixed;
+    right: 0;
+    top: 0;
+    bottom: 0;
+    width: 220px;
+    background: var(--surface);
+    border-left: 1px solid var(--border);
+    display: flex;
+    flex-direction: column;
+    z-index: 50;
+}
+
+.logo-sidebar {
+    padding: 24px 20px 20px;
+    border-bottom: 1px solid var(--border);
+}
+
+.logo-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: white;
+    line-height: 1.3;
+}
+
+.logo-sub {
+    font-size: 12px;
+    color: var(--muted);
+    margin-top: 4px;
+}
+
+.nav {
+    padding: 16px 12px;
+    flex: 1;
+}
+
+.nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 12px;
+    border-radius: var(--radius);
+    cursor: pointer;
+    color: var(--muted);
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 4px;
+    transition: all 0.15s;
+    border: 1px solid transparent;
+}
+
+.nav-item:hover {
+    color: var(--text);
+    background: var(--surface2);
+}
+
+.nav-item.active {
+    color: white;
+    background: var(--blue-dim);
+    border-color: var(--blue);
+}
+
+.nav-icon {
+    width: 18px;
+    height: 18px;
+    flex-shrink: 0;
+}
+
+.alert-badge {
+    margin-right: auto;
+    background: var(--red);
+    color: white;
+    font-size: 11px;
+    border-radius: 20px;
+    padding: 2px 8px;
+    font-weight: 700;
+}
+
+/* ============================================ */
+/* المحتوى الرئيسي                             */
+/* ============================================ */
+.main {
+    margin-right: 220px;
+    min-height: 100vh;
+    padding: 28px 32px;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+
+.page-header {
+    margin-bottom: 24px;
+}
+
+.page-title {
+    font-size: 22px;
+    font-weight: 800;
+    color: white;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.page-sub {
+    font-size: 13px;
+    color: var(--muted);
+    margin-top: 4px;
+}
+
+/* ============================================ */
+/* بطاقات الإحصائيات                           */
+/* ============================================ */
+.metrics {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.metric {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 20px;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.metric:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+}
+
+.metric::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    right: 0;
+    width: 4px;
+    height: 100%;
+}
+
+.metric.blue::before { background: var(--blue); }
+.metric.green::before { background: var(--green); }
+.metric.amber::before { background: var(--amber); }
+.metric.red::before { background: var(--red); }
+
+.metric .m-num {
+    font-size: 34px;
+    font-weight: 800;
+    line-height: 1;
+    margin-bottom: 6px;
+}
+
+.metric.blue .m-num { color: var(--blue-light); }
+.metric.green .m-num { color: var(--green); }
+.metric.amber .m-num { color: var(--amber); }
+.metric.red .m-num { color: var(--red); }
+
+.metric .m-lbl {
+    font-size: 12px;
+    color: var(--muted);
+    font-weight: 500;
+}
+
+/* ============================================ */
+/* البطاقات                                    */
+/* ============================================ */
+.card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 20px;
+}
+
+.card-title {
+    font-size: 15px;
+    font-weight: 700;
+    color: white;
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+/* ============================================ */
+/* الجداول                                     */
+/* ============================================ */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+}
+
+th {
+    padding: 10px 12px;
+    text-align: right;
+    color: var(--muted);
+    font-weight: 600;
+    border-bottom: 1px solid var(--border);
+    white-space: nowrap;
+    font-size: 12px;
+}
+
+td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--border);
+    color: var(--text);
+    vertical-align: middle;
+}
+
+tr:last-child td {
+    border-bottom: none;
+}
+
+tr:hover td {
+    background: var(--surface2);
+}
+
+/* ============================================ */
+/* الشارات والحالات                            */
+/* ============================================ */
+.badge {
+    display: inline-block;
+    padding: 3px 10px;
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.badge-pending {
+    background: var(--amber-dim);
+    color: var(--amber);
+}
+
+.badge-done {
+    background: var(--green-dim);
+    color: var(--green);
+}
+
+.badge-partial {
+    background: var(--blue-dim);
+    color: var(--blue-light);
+}
+
+.tag-late {
+    background: var(--red-dim);
+    color: var(--red);
+    font-size: 11px;
+    padding: 2px 8px;
+    border-radius: 20px;
+    display: inline-block;
+    margin-right: 4px;
+}
+
+/* ============================================ */
+/* الأزرار                                     */
+/* ============================================ */
+.btn {
+    padding: 8px 18px;
+    border-radius: var(--radius);
+    border: 1px solid var(--border2);
+    background: var(--surface2);
+    cursor: pointer;
+    font-size: 13px;
+    color: var(--text);
+    font-family: 'Tajawal', sans-serif;
+    transition: all 0.15s;
+    font-weight: 500;
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.btn:hover {
+    background: var(--border);
+    color: white;
+}
+
+.btn-primary {
+    background: var(--blue);
+    border-color: var(--blue);
+    color: white;
+}
+
+.btn-primary:hover {
+    background: var(--blue-light);
+    border-color: var(--blue-light);
+}
+
+.btn-success {
+    background: var(--green);
+    border-color: var(--green);
+    color: white;
+}
+
+.btn-success:hover {
+    background: #4aca8a;
+}
+
+.btn-danger {
+    background: var(--red-dim);
+    border-color: var(--red);
+    color: var(--red);
+    font-size: 12px;
+    padding: 4px 10px;
+}
+
+.btn-danger:hover {
+    background: var(--red);
+    color: white;
+}
+
+.btn-sm {
+    font-size: 12px;
+    padding: 5px 12px;
+}
+
+.btn-green {
+    background: var(--green-dim);
+    border-color: var(--green);
+    color: var(--green);
+}
+
+.btn-green:hover {
+    background: var(--green);
+    color: white;
+}
+
+.btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+/* ============================================ */
+/* نماذج                                       */
+/* ============================================ */
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+
+.form-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 14px;
+}
+
+/* ============================================ */
+/* تنبيهات                                     */
+/* ============================================ */
+.alert-box {
+    background: var(--red-dim);
+    border: 1px solid var(--red);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--red);
+    display: none;
+}
+
+.alert-box.show {
+    display: block;
+}
+
+.alert-box ul {
+    margin-top: 8px;
+    padding-right: 16px;
+}
+
+.alert-box ul li {
+    margin-bottom: 4px;
+    font-size: 12px;
+    color: #ffaaaa;
+    cursor: pointer;
+}
+
+.alert-box ul li:hover {
+    text-decoration: underline;
+}
+
+.alert-warn {
+    background: var(--amber-dim);
+    border: 1px solid var(--amber);
+    border-radius: var(--radius);
+    padding: 14px 18px;
+    margin-bottom: 20px;
+    font-size: 13px;
+    color: var(--amber);
+    display: none;
+}
+
+.alert-warn.show {
+    display: block;
+}
+
+/* ============================================ */
+/* شريط التقدم                                 */
+/* ============================================ */
+.progress-bar {
+    height: 6px;
+    background: var(--border);
+    border-radius: 3px;
+    overflow: hidden;
+    margin-top: 6px;
+}
+
+.progress-fill {
+    height: 100%;
+    border-radius: 3px;
+    background: var(--blue);
+    transition: width 0.4s ease;
+}
+
+/* ============================================ */
+/* نافذة منبثقة (Modal)                        */
+/* ============================================ */
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+    backdrop-filter: blur(4px);
+}
+
+.modal {
+    background: var(--surface);
+    border: 1px solid var(--border2);
+    border-radius: var(--radius-lg);
+    padding: 28px;
+    width: 90%;
+    max-width: 600px;
+    max-height: 85vh;
+    overflow-y: auto;
+    animation: slideIn 0.3s ease;
+}
+
+@keyframes slideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.modal-title-text {
+    font-size: 17px;
+    font-weight: 800;
+    color: white;
+}
+
+.close-btn {
+    cursor: pointer;
+    font-size: 24px;
+    color: var(--muted);
+    border: none;
+    background: none;
+    line-height: 1;
+    padding: 4px;
+    transition: color 0.2s;
+}
+
+.close-btn:hover {
+    color: white;
+}
+
+/* ============================================ */
+/* حالة فارغة                                  */
+/* ============================================ */
+.empty-state {
+    text-align: center;
+    padding: 3rem;
+    color: var(--muted);
+    font-size: 14px;
+}
+
+/* ============================================ */
+/* تجاوب مع الشاشات                            */
+/* ============================================ */
+@media (max-width: 1200px) {
+    .metrics {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 992px) {
+    .sidebar {
+        width: 70px;
+    }
+   
+    .logo-title,
+    .logo-sub,
+    .nav-item span:not(.alert-badge) {
+        display: none;
+    }
+   
+    .nav-item {
+        justify-content: center;
+        padding: 12px;
+    }
+   
+    .nav-icon {
+        width: 22px;
+        height: 22px;
+    }
+   
+    .main {
+        margin-right: 70px;
+    }
+}
+
+@media (max-width: 768px) {
+    .main {
+        padding: 20px 16px;
+    }
+   
+    .metrics {
+        grid-template-columns: 1fr;
+    }
+   
+    .form-row,
+    .form-row-3 {
+        grid-template-columns: 1fr;
+    }
+   
+    table {
+        display: block;
+        overflow-x: auto;
+    }
+   
+    .sidebar {
+        position: relative;
+        width: 100%;
+        height: auto;
+        border-left: none;
+        border-bottom: 1px solid var(--border);
+    }
+   
+    .nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        padding: 8px;
+    }
+   
+    .nav-item {
+        flex: 0 1 auto;
+    }
+   
+    .logo-title,
+    .logo-sub {
+        display: block;
+    }
+   
+    .main {
+        margin-right: 0;
+    }
+}
+
 @media (max-width: 480px) {
     .login-card {
         padding: 30px 20px;
     }
+   
+    .logo h1 {
+        font-size: 20px;
+    }
+   
+    .page-title {
+        font-size: 18px;
+    }
+   
+    .card {
+        padding: 16px;
+    }
+   
+    .metric {
+        padding: 16px;
+    }
+   
+    .metric .m-num {
+        font-size: 28px;
+    }
 }
+
+/* ============================================ */
+/* أدوات مساعدة                                */
+/* ============================================ */
+.text-center { text-align: center; }
+.text-right { text-align: right; }
+.text-left { text-align: left; }
+
+.mt-1 { margin-top: 0.25rem; }
+.mt-2 { margin-top: 0.5rem; }
+.mt-3 { margin-top: 1rem; }
+.mt-4 { margin-top: 1.5rem; }
+.mt-5 { margin-top: 2rem; }
+
+.mb-1 { margin-bottom: 0.25rem; }
+.mb-2 { margin-bottom: 0.5rem; }
+.mb-3 { margin-bottom: 1rem; }
+.mb-4 { margin-bottom: 1.5rem; }
+.mb-5 { margin-bottom: 2rem; }
+
+.p-1 { padding: 0.25rem; }
+.p-2 { padding: 0.5rem; }
+.p-3 { padding: 1rem; }
+.p-4 { padding: 1.5rem; }
+.p-5 { padding: 2rem; }
+
+.flex { display: flex; }
+.flex-col { flex-direction: column; }
+.items-center { align-items: center; }
+.justify-center { justify-content: center; }
+.justify-between { justify-content: space-between; }
+.gap-1 { gap: 0.25rem; }
+.gap-2 { gap: 0.5rem; }
+.gap-3 { gap: 1rem; }
+.gap-4 { gap: 1.5rem; }
+
+.w-full { width: 100%; }
+.h-full { height: 100%; }
+
+.hidden { display: none; }
+.block { display: block; }
+.inline-block { display: inline-block; }
+
+.cursor-pointer { cursor: pointer; }
+
+.text-success { color: var(--green); }
+.text-warning { color: var(--amber); }
+.text-danger { color: var(--red); }
+.text-info { color: var(--blue); }
+.text-muted { color: var(--muted); }
