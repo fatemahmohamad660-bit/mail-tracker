@@ -1,0 +1,81 @@
+
+
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>اختبار تسجيل الدخول</title>
+    <style>
+        body { font-family: sans-serif; padding: 20px; }
+        input, button { padding: 10px; margin: 5px; }
+        pre { background: #1a1a1a; color: #0f0; padding: 15px; }
+    </style>
+</head>
+<body>
+    <h1>🔍 اختبار تسجيل الدخول مباشرة</h1>
+   
+    <input type="text" id="apiUrl" placeholder="رابط API" style="width:100%; direction:ltr;">
+    <button onclick="saveUrl()">حفظ الرابط</button>
+   
+    <hr>
+   
+    <input type="text" id="username" placeholder="اسم المستخدم" value="admin">
+    <input type="password" id="password" placeholder="كلمة المرور" value="admin123">
+    <button onclick="testLogin()">اختبار تسجيل الدخول</button>
+   
+    <hr>
+   
+    <h3>النتيجة:</h3>
+    <pre id="result">اضغط على اختبار</pre>
+   
+    <script>
+        let API_URL = '';
+       
+        function saveUrl() {
+            API_URL = document.getElementById('apiUrl').value;
+            localStorage.setItem('apiUrl', API_URL);
+            document.getElementById('result').textContent = 'تم حفظ الرابط';
+        }
+       
+        async function testLogin() {
+            if (!API_URL) {
+                document.getElementById('result').textContent = '❌ الرجاء إدخال رابط API';
+                return;
+            }
+           
+            const username = document.getElementById('username').value;
+            const password = document.getElementById('password').value;
+           
+            document.getElementById('result').textContent = '⏳ جاري الاختبار...';
+           
+            try {
+                const formData = new FormData();
+                formData.append('action', 'login');
+                formData.append('payload', JSON.stringify({ username, password }));
+               
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    body: formData
+                });
+               
+                const text = await response.text();
+               
+                try {
+                    const data = JSON.parse(text);
+                    document.getElementById('result').textContent = JSON.stringify(data, null, 2);
+                } catch {
+                    document.getElementById('result').textContent = '❌ استجابة غير صالحة:\n' + text;
+                }
+            } catch (error) {
+                document.getElementById('result').textContent = '❌ خطأ: ' + error.message;
+            }
+        }
+       
+        const saved = localStorage.getItem('apiUrl');
+        if (saved) {
+            document.getElementById('apiUrl').value = saved;
+            API_URL = saved;
+        }
+    </script>
+</body>
+</html>
