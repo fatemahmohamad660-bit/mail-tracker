@@ -5,7 +5,7 @@
 // ============================================
 
 // ⚠️ استبدل هذا الرابط برابط API الخاص بك
-const API_URL = 'https://script.google.com/macros/s/AKfycbxCDCw9_9LXQ0xwW0avo4bxgppYKOxLiNAHG5iJ64iKMGVVZDycVZ-luysig7oKB6gn/exec';
+const API_URL = 'https://script.google.com/macros/s/AKfycbxLK7UwM50jF5K0GPVVNkO4iV0EhYvvLH_WIZNI1SELBOisQmWxAykb1kROSOPbxd4l/exec';
 
 // ============================================
 // دوال التواصل مع API
