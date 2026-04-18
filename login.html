@@ -20,7 +20,7 @@
             </div>
            
             <div id="errorMessage" class="error-message"></div>
-            <div id="loadingMessage" class="loading-message" style="display:none;">جاري تسجيل الدخول...</div>
+            <div id="loadingMessage" class="loading-message" style="display:none;">⏳ جاري تسجيل الدخول...</div>
            
             <form id="loginForm">
                 <div class="form-group">
@@ -44,12 +44,17 @@
    
     <script src="js/app.js"></script>
     <script>
+        // ============================================
         // التحقق من تسجيل الدخول المسبق
+        // ============================================
         if (isLoggedIn()) {
             const user = getCurrentUser();
             redirectBasedOnRole(user);
         }
        
+        // ============================================
+        // دالة التوجيه حسب الدور
+        // ============================================
         function redirectBasedOnRole(user) {
             if (user.role === 'admin') {
                 window.location.href = 'index.html';
@@ -60,6 +65,9 @@
             }
         }
        
+        // ============================================
+        // معالجة نموذج تسجيل الدخول
+        // ============================================
         document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
            
@@ -69,33 +77,66 @@
             const loadingDiv = document.getElementById('loadingMessage');
             const loginBtn = document.getElementById('loginBtn');
            
+            // التحقق من إدخال البيانات
             if (!username || !password) {
                 errorDiv.textContent = 'يرجى إدخال اسم المستخدم وكلمة المرور';
                 errorDiv.classList.add('show');
                 return;
             }
            
+            // إخفاء رسائل الخطأ السابقة وإظهار التحميل
             errorDiv.classList.remove('show');
             loadingDiv.style.display = 'block';
             loginBtn.disabled = true;
+            loginBtn.textContent = '⏳ جاري تسجيل الدخول...';
            
             try {
+                // استدعاء دالة تسجيل الدخول من app.js
                 const result = await login(username, password);
                
                 if (result.success) {
+                    // تسجيل دخول ناجح - توجيه المستخدم
+                    loadingDiv.style.display = 'none';
                     redirectBasedOnRole(result.user);
                 } else {
-                    errorDiv.textContent = result.message || 'فشل تسجيل الدخول';
+                    // فشل تسجيل الدخول
+                    loadingDiv.style.display = 'none';
+                    errorDiv.textContent = result.message || '❌ فشل تسجيل الدخول. تحقق من اسم المستخدم وكلمة المرور.';
                     errorDiv.classList.add('show');
+                    loginBtn.disabled = false;
+                    loginBtn.textContent = 'تسجيل الدخول';
                 }
             } catch (error) {
-                errorDiv.textContent = 'حدث خطأ في الاتصال. حاول مرة أخرى.';
-                errorDiv.classList.add('show');
-            } finally {
+                // خطأ في الاتصال
                 loadingDiv.style.display = 'none';
+                console.error('Login error:', error);
+                errorDiv.textContent = '❌ فشل الاتصال بالخادم. حاول مرة أخرى.';
+                errorDiv.classList.add('show');
                 loginBtn.disabled = false;
+                loginBtn.textContent = 'تسجيل الدخول';
             }
         });
+       
+        // ============================================
+        // إضافة إمكانية الضغط على Enter للتسجيل
+        // ============================================
+        document.getElementById('password').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+       
+        document.getElementById('username').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                document.getElementById('loginForm').dispatchEvent(new Event('submit'));
+            }
+        });
+       
+        // ============================================
+        // عرض رسالة ترحيبية في الكونسول
+        // ============================================
+        console.log('🚀 نظام متابعة البريد الوارد - صفحة تسجيل الدخول');
+        console.log('📧 الإصدار 3.0.0');
     </script>
 </body>
 </html>
