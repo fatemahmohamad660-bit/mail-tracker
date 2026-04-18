@@ -1,0 +1,110 @@
+
+
+<!DOCTYPE html>
+<html lang="ar">
+<head>
+    <meta charset="UTF-8">
+    <title>اختبار API</title>
+    <style>
+        body { font-family: 'Tajawal', sans-serif; padding: 20px; background: #f5f5f5; }
+        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 15px; }
+        button { padding: 12px 24px; margin: 5px; font-size: 16px; cursor: pointer; }
+        pre { background: #1a1a1a; color: #00ff00; padding: 15px; border-radius: 8px; overflow-x: auto; }
+        input { width: 100%; padding: 12px; margin: 10px 0; border: 1px solid #ddd; border-radius: 8px; }
+        .error { color: red; }
+        .success { color: green; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔍 تشخيص الاتصال بـ API</h1>
+       
+        <h2>1. رابط API المستخدم:</h2>
+        <input type="text" id="apiUrl" placeholder="https://script.google.com/macros/s/AKfycbxCDCw9_9LXQ0xwW0avo4bxgppYKOxLiNAHG5iJ64iKMGVVZDycVZ-luysig7oKB6gn/exec" style="direction: ltr;">
+        <button onclick="saveApiUrl()">حفظ الرابط</button>
+       
+        <h2>2. اختبار GET (فتح الرابط مباشرة):</h2>
+        <button onclick="testGet()">اختبار GET</button>
+        <a id="apiLink" href="#" target="_blank">فتح الرابط في نافذة جديدة</a>
+       
+        <h2>3. اختبار POST (تسجيل الدخول):</h2>
+        <button onclick="testPost()">اختبار POST مع admin/admin123</button>
+       
+        <h2>4. النتيجة:</h2>
+        <pre id="result">اضغط على أحد الأزرار للاختبار</pre>
+    </div>
+   
+    <script>
+        let API_URL = '';
+       
+        function saveApiUrl() {
+            API_URL = document.getElementById('apiUrl').value.trim();
+            document.getElementById('apiLink').href = API_URL;
+            document.getElementById('result').textContent = 'تم حفظ الرابط: ' + API_URL;
+        }
+       
+        async function testGet() {
+            if (!API_URL) {
+                document.getElementById('result').textContent = '❌ الرجاء إدخال رابط API أولاً';
+                return;
+            }
+           
+            document.getElementById('result').textContent = '⏳ جاري اختبار GET...';
+           
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'GET',
+                    mode: 'cors'
+                });
+                const text = await response.text();
+                let data;
+                try {
+                    data = JSON.parse(text);
+                } catch {
+                    data = text;
+                }
+                document.getElementById('result').textContent = '✅ GET نجح:\n' + JSON.stringify(data, null, 2);
+            } catch (error) {
+                document.getElementById('result').textContent = '❌ GET فشل:\n' + error.message + '\n\nقد يكون هناك مشكلة CORS. هذا طبيعي.';
+            }
+        }
+       
+        async function testPost() {
+            if (!API_URL) {
+                document.getElementById('result').textContent = '❌ الرجاء إدخال رابط API أولاً';
+                return;
+            }
+           
+            document.getElementById('result').textContent = '⏳ جاري اختبار POST...';
+           
+            try {
+                const response = await fetch(API_URL, {
+                    method: 'POST',
+                    mode: 'no-cors',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        action: 'login',
+                        payload: { username: 'admin', password: 'admin123' }
+                    })
+                });
+               
+                document.getElementById('result').textContent = '✅ POST تم الإرسال بنجاح (مع no-cors)\n\n' +
+                    'لا يمكن قراءة الرد بسبب no-cors.\n' +
+                    'هذا يعني أن المشكلة هي CORS.';
+            } catch (error) {
+                document.getElementById('result').textContent = '❌ POST فشل:\n' + error.message;
+            }
+        }
+       
+        // تحميل الرابط المحفوظ
+        const savedUrl = localStorage.getItem('apiUrl');
+        if (savedUrl) {
+            document.getElementById('apiUrl').value = savedUrl;
+            API_URL = savedUrl;
+            document.getElementById('apiLink').href = savedUrl;
+        }
+    </script>
+</body>
+</html>
