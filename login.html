@@ -8,6 +8,7 @@
     <title>تسجيل الدخول - نظام متابعة البريد</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="css/style.css">
+    <link rel="manifest" href="manifest.json">
 </head>
 <body>
     <div class="login-container">
@@ -19,11 +20,12 @@
             </div>
            
             <div id="errorMessage" class="error-message"></div>
+            <div id="loadingMessage" class="loading-message" style="display:none;">جاري تسجيل الدخول...</div>
            
             <form id="loginForm">
                 <div class="form-group">
                     <label>👤 اسم المستخدم</label>
-                    <input type="text" id="username" placeholder="أدخل اسم المستخدم" required>
+                    <input type="text" id="username" placeholder="أدخل اسم المستخدم" required autocomplete="off">
                 </div>
                
                 <div class="form-group">
@@ -31,7 +33,7 @@
                     <input type="password" id="password" placeholder="أدخل كلمة المرور" required>
                 </div>
                
-                <button type="submit" class="btn-login">تسجيل الدخول</button>
+                <button type="submit" class="btn-login" id="loginBtn">تسجيل الدخول</button>
             </form>
            
             <div class="footer">
@@ -42,14 +44,57 @@
    
     <script src="js/app.js"></script>
     <script>
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
+        // التحقق من تسجيل الدخول المسبق
+        if (isLoggedIn()) {
+            const user = getCurrentUser();
+            redirectBasedOnRole(user);
+        }
+       
+        function redirectBasedOnRole(user) {
+            if (user.role === 'admin') {
+                window.location.href = 'index.html';
+            } else if (user.role === 'deputy') {
+                window.location.href = 'deputy.html';
+            } else {
+                window.location.href = 'employee.html';
+            }
+        }
+       
+        document.getElementById('loginForm').addEventListener('submit', async function(e) {
             e.preventDefault();
-            const username = document.getElementById('username').value;
-            const password = document.getElementById('password').value;
            
-            // مؤقتاً - سيتم تعديله لاحقاً للتواصل مع Google Sheets
-            console.log('محاولة تسجيل الدخول:', username);
-            alert('سيتم ربط التطبيق بقاعدة البيانات في المرحلة القادمة');
+            const username = document.getElementById('username').value.trim();
+            const password = document.getElementById('password').value;
+            const errorDiv = document.getElementById('errorMessage');
+            const loadingDiv = document.getElementById('loadingMessage');
+            const loginBtn = document.getElementById('loginBtn');
+           
+            if (!username || !password) {
+                errorDiv.textContent = 'يرجى إدخال اسم المستخدم وكلمة المرور';
+                errorDiv.classList.add('show');
+                return;
+            }
+           
+            errorDiv.classList.remove('show');
+            loadingDiv.style.display = 'block';
+            loginBtn.disabled = true;
+           
+            try {
+                const result = await login(username, password);
+               
+                if (result.success) {
+                    redirectBasedOnRole(result.user);
+                } else {
+                    errorDiv.textContent = result.message || 'فشل تسجيل الدخول';
+                    errorDiv.classList.add('show');
+                }
+            } catch (error) {
+                errorDiv.textContent = 'حدث خطأ في الاتصال. حاول مرة أخرى.';
+                errorDiv.classList.add('show');
+            } finally {
+                loadingDiv.style.display = 'none';
+                loginBtn.disabled = false;
+            }
         });
     </script>
 </body>
